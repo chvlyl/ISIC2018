@@ -71,7 +71,7 @@
 \maketitle
 
 \begin{abstract}
-Melanoma is the most deadly form of skin cancer worldwide. Many efforts have been made for early detection of melanoma. The International Skin Imaging Collaboration (ISIC) hosted the 2018 Challenges to help the diagnosis of melanoma based on dermoscopic images. In this paper, we describe our solutions for the task 2 of ISIC 2018 Challenges. We present two deep learning approaches to automatically detect lesion attributes of melanoma, one is a U-Net based model and the other is a Mask R-CNN based model. The Jaccard index on official validation data is 0.477 and 0.233, respectively. The code for our solutions is publicly available. 
+Melanoma is the most deadly form of skin cancer worldwide. Many efforts have been made for early detection of melanoma. The International Skin Imaging Collaboration (ISIC) hosted the 2018 Challenges to help the diagnosis of melanoma based on dermoscopic images. In this paper, we describe our solutions for the task 2 of ISIC 2018 Challenges. We present two deep learning approaches to automatically detect lesion attributes of melanoma, one is a multi-task U-Net model and the other is a Mask R-CNN based model. Our multi-task U-Net model achieved a Jaccard index of 0.433 on official test data, which ranks the 5th place on the final leaderboard. The code for our solutions is publicly available. 
 \end{abstract}
 
 
@@ -88,7 +88,7 @@ Towards this goal, the International Skin Imaging Collaboration (ISIC) hosted th
 Deep learning, especially convolutional neural network (CNN), has been widely applied to solve many problems in computer vision. Various CNN based models have been developed for object classification and detection, such as VGG \citep{simonyan2014very}, ResNet \citep{he2016deep}, Inception \citep{szegedy2017inception}, DenseNet \citep{huang2017densely}, and more \citep{liu2017survey}. For image segmentation, FCN \citep{long2015fully}, U-Net \citep{ronneberger2015u}, Mask R-CNN \citep{he2017mask} are some of the most used deep learning models.  Many deep learning based approaches have been applied for melanoma detection \citep{mishra2016overview}. However, most of those researches applied deep learning models to either classify skin diseases \citep{haenssle2018man, yu2018acral} or segment whole lesion regions \citep{zhang2017melanoma}, which are corresponding to the task 1 and task 3 in ISIC 2018 Challenges. To our knowledge, currently there is no deep learning based approach has been applied to segment specific lesion attributes as in the task 2 of ISIC 2018 Challenges. 
 
 %% our methods
-In this paper, we describe our solutions for the task 2 of ISIC 2018 Challenges. We present two deep learning approaches to automatically detect lesion attributes of melanoma. One is a U-Net based approach and the other is a Mask R-CNN based approach. In the U-Net model, we replaced the encoder part of the U-Net with a pretrained VGG16 network \citep{shvets2018automatic}. In the middle layer and the last layer of the U-Net, we added two classification heads to classify the empty masks versus the non-empty masks.  The Jaccard index on official validation data was 0.477 and 0.233 for U-Net and Mask R-CNN based approaches, respectively. The code for our solutions is publicly available. 
+In this paper, we describe our solutions for the task 2 of ISIC 2018 Challenges. We present two deep learning approaches to automatically detect lesion attributes of melanoma. One is a U-Net based approach and the other is a Mask R-CNN based approach. In the U-Net model, we replaced the encoder part of the U-Net with a pretrained VGG16 network \citep{shvets2018automatic}. In the middle layer and the last layer of the U-Net, we added two classification heads to classify the empty masks versus the non-empty masks.  Our multi-task U-Net model achieved a Jaccard index of 0.433 on official test data, which ranks the 5th place on the final leaderboard. The code for our solutions is publicly available at https://github.com/chvlyl/ISIC2018. 
 
 \section{Methods}
 
@@ -175,24 +175,24 @@ Figure 2 shows an example of several skin images and their corresponding lesion 
 
 
 \begin{table}
-  \caption{Jaccard index on the official validation dataset}
+  \caption{Jaccard index on the official validation and test dataset}
   \label{sample-table}
   \centering
-  \begin{tabular}{lc}
+  \begin{tabular}{lcc}
     \toprule
-    %\multicolumn{2}{c}{Part}                   \\
-    %\cmidrule(r){1-2}
-    Model     & Jaccard index   \\
+    %\multicolumn{3}{c}{Part}                   \\
+    %\cmidrule(r){1-3}
+    Model     & Validation & Test   \\
     \midrule
-    U-Net & 0.477     \\
-    Mask R-CNN     & 0.233      \\
+    U-Net & 0.477   & 0.433  \\ 
+    Mask R-CNN     & 0.233  & NA     \\
     \bottomrule
   \end{tabular}
 \end{table}
 
 
 \subsection{Discussion}
-In this paper, we proposed two deep learning based approaches to detect five attributes of skin lesions. We achieved a Jaccard index of 0.477 and 0.233 on the official validation data. As the writing of this paper, the final Jaccard index on the official test data is not available yet. 
+In this paper, we proposed two deep learning based approaches to detect five attributes of skin lesions. We achieved a Jaccard index of 0.477 and 0.233 on the official validation data. The final Jaccard index on the official test data is 0.433 for our multi-task U-Net model, which ranks the 5th place on the final leaderboard.  We didn't submit our test result for the Mask R-CNN model.
 
 For our U-Net based model, we tried to add the batch normalize layers to the encoder and decoder parts of the network. However, this does not improve the model performance compared to the model without batch normalization layers. We also tried to replace the encoder part of the U-Net network with pretrained DenseNet. However, the GPU memory usage was too hight and we could only fit one image per patch. The training took a long time and the final results were worse than VGG as the encoder. 
 
