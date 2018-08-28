@@ -21,6 +21,12 @@ git clone https://github.com/chvlyl/ISIC2018.git
 cd ISIC2018
 ```
 
+### Download the ISIC2018 test images
+All the ISIC2018 test images are in jpg format. 
+
+### Donwload the pretrained model weights
+
+
 # Further improvement
 
 # Reference	
