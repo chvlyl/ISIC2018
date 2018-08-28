@@ -3,11 +3,6 @@ Melanoma is the most deadly form of skin cancer worldwide. Many efforts have bee
 
 # How to run the pre-trained model on the test data
 
-### Clone this repo
-```
-git clone https://github.com/chvlyl/ISIC2018.git
-```
-
 ### Create a Python environment
 ```
 conda create -n isic2018 python=3
@@ -18,6 +13,11 @@ source activate isic2018
 Install packages.
 ```
 pip install -r requirements.txt
+```
+
+### Clone this repo
+```
+git clone https://github.com/chvlyl/ISIC2018.git
 ```
 
 # Further improvement
