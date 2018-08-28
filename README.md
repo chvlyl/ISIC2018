@@ -11,6 +11,7 @@ git clone https://github.com/chvlyl/ISIC2018.git
 ### Create a Python environment
 ```
 conda create -n isic2018 python=3
+source activate isic2018
 ```
 
 ### Install necessary packages
