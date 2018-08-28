@@ -8,8 +8,13 @@ Melanoma is the most deadly form of skin cancer worldwide. Many efforts have bee
 git clone https://github.com/chvlyl/ISIC2018.git
 ```
 
+### Create a Python environment
+```
+conda create -n isic2018 python=3
+```
+
 ### Install necessary packages
-Create a new python environment and install the packages.
+Install packages.
 ```
 pip install -r requirements.txt
 ```
