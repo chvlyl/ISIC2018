@@ -1,3 +1,4 @@
+import argparse
 import h5py
 import random
 import os
@@ -71,14 +72,14 @@ def load_image_from_h5(image_file):
 
 
 
-def load_image_from_file_and_save_to_h5(img_id, image_file, resize=True):
+def load_image_from_file_and_save_to_h5(img_id, image_file, temp_path, resize=True):
     if resize:
         img = load_img(image_file, target_size=(512,512), grayscale=False)  # this is a PIL image
     else:
         img = load_img(image_file, grayscale=False)  # this is a PIL image
     img_np = img_to_array(img)
     ### why only 0-255 integers
-    save_path = '/media/eric/SSD2/Project/11_ISCB2018/0_Data/Task2/valid_h5/'
+    save_path = temp_path
     img_np = img_np.astype(np.uint8)
     hdf5_file = h5py.File(save_path + '%s_W%s_H%s.h5' % (img_id,img_np.shape[0],img_np.shape[1]), 'w')
     hdf5_file.create_dataset('img', data=img_np, dtype=np.uint8)
@@ -86,11 +87,11 @@ def load_image_from_file_and_save_to_h5(img_id, image_file, resize=True):
     return img_np
 
 
-def test_new_data( model_weight, image_path, model='UNet16'):
+def test_new_data(model_weight, image_path, temp_path, output_path, model):
 
-    image_ids = sorted([fname.split('/')[-1].split('.')[0] for fname in glob.glob(image_path + '*.jpg')])
-    if len(image_ids) == 0:
-        print('No image found')
+    image_ids = sorted([fname.split('/')[-1].split('.')[0] for fname in glob.glob(os.path.join(image_path, '*.jpg'))])
+    #if len(image_ids) == 0:
+    #    print('No image found')
 
     data_set = TestDataset(image_ids, image_path)
     test_loader = DataLoader(data_set, batch_size=1, shuffle=False, num_workers=10, pin_memory=False)
@@ -117,7 +118,7 @@ def test_new_data( model_weight, image_path, model='UNet16'):
             img_id = img_id[0]
             W = W[0].item()
             H = H[0].item()
-            print(img_id, W, H, test_image.size())
+            print('Loading', img_id, 'W',W, 'H',H, 'resized image',test_image.size())
             test_image = test_image.to(device)  # [N, 1, H, W]
             test_image = test_image.permute(0, 3, 1, 2)
             outputs, outputs_mask_ind1, outputs_mask_ind2 = model(test_image)
@@ -127,9 +128,9 @@ def test_new_data( model_weight, image_path, model='UNet16'):
                 resize_mask = cv2.resize(test_prob[ind, :, :], (W, H), interpolation=cv2.INTER_CUBIC)
                 #for cutoff in [0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]:
                 for cutoff in [0.3]:
-                    if not os.path.exists('submission_%s'%(cutoff)): os.makedirs('submission_%s'%(cutoff))
+                    #if not os.path.exists('submission_%s'%(cutoff)): os.makedirs('submission_%s'%(cutoff))
                     test_mask = (resize_mask>cutoff).astype('int') *255.0
-                    cv2.imwrite('submission_%s/'%(cutoff) + "ISIC_%s_attribute_%s.png" % (img_id.split('_')[1],attr), test_mask)
+                    cv2.imwrite(os.path.join(output_path,"ISIC_%s_attribute_%s.png" % (img_id.split('_')[1],attr)), test_mask)
             #break
 
 ## cutoff validation jaccard
@@ -140,20 +141,49 @@ def test_new_data( model_weight, image_path, model='UNet16'):
 ## 0.4 0.477
 ## 0.5 0.477
 def main():
-    model ='UNet16BN'
+    parser = argparse.ArgumentParser()
+    arg = parser.add_argument
+    arg('--model', type=str, default='UNet16', choices=['UNet', 'UNet11', 'UNet16', 'UNet16BN', 'LinkNet34'])
+    arg('--model-weight', type=str, default=None)
+    arg('--image-path', type=str, default='data', help='image path')
+    arg('--temp-path', type=str, default='temp', help='temporary folder for preprocessed data')
+    arg('--output-path', type=str, default='prediction', help='prediction')
+    
+    args = parser.parse_args()
+    
+    model = args.model
     #model_weight = 'runs_three_losses_part2/debug/model.pt'
     #model_weight = 'runs_three_losses_part2_including_validation/debug/model.pt'
-    model_weight = 'runs_vgg16bn/debug/model.pt'
+    #model_weight = 'runs_vgg16bn/debug/model.pt'
+    model_weight = args.model_weight
+    if model_weight is None:
+        raise ValueError('Please specify model-weight')
 
     #image_path = '/media/eric/HDD1/1_Project_Raw_Data/23_ISIC_2018/0_Data/Task2/ISIC2018_Task1-2_Validation_Input/'
-    image_path = '/media/eric/HDD1/1_Project_Raw_Data/23_ISIC_2018/0_Data/Task2/ISIC2018_Task1-2_Test_Input/'
+    #image_path = '/media/eric/HDD1/1_Project_Raw_Data/23_ISIC_2018/0_Data/Task2/ISIC2018_Task1-2_Test_Input/'
     #image_path = '/media/eric/SSD2/Project/11_ISCB2018/0_Data/Task2/valid_h5/'
-    print(image_path)
-    test_new_data(model_weight, image_path, model)
+    #print(image_path)
+    image_path = args.image_path
+    nfiles = len(os.path.join(image_path, '*.jpg'))
+    if nfiles == 0 :
+        raise ValueError('No images found')
+    else:
+        print('%s images found' % nfiles)
+    
+    temp_path = args.temp_path
+    output_path = args.output_path
+    if not os.path.exists(output_path):
+        os.mkdir(output_path)
+        
+    
+    test_new_data(model_weight, image_path, temp_path, output_path, model)
 
 
 
 if __name__ == '__main__':
-    # python train.py --image-path /media/eric/SSD2/Project/11_ISCB2018/0_Data/Task2/h5/
-    # tensorboard --logdir runs --port 6008
+    ### ISIC2018 test data
+    # python submission.py --image-path /media/eric/HDD1/1_Project_Raw_Data/23_ISIC_2018/0_Data/Task2/ISIC2018_Task1-2_Test_Input/ --model-weight ../20180705_TernausNet_Reformat/runs_three_losses_part2/debug/model.pt
+    ### ISIC2018 validation data
+    # python submission.py --image-path /media/eric/HDD1/1_Project_Raw_Data/23_ISIC_2018/0_Data/Task2/ISIC2018_Task1-2_Validation_Input/ --model-weight ../20180705_TernausNet_Reformat/runs_three_losses_part2/debug/model.pt
+    
     main()
