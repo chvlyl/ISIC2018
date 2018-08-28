@@ -10,10 +10,10 @@ source activate isic2018
 ```
 
 ### Install necessary packages
-Install packages.
 ```
 pip install -r requirements.txt
 ```
+Those are the packages installed in my environment and many packages are not necessarily needed to run the pretrained model. 
 
 ### Clone this repo
 ```
