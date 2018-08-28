@@ -22,10 +22,15 @@ cd ISIC2018
 ```
 
 ### Download the ISIC2018 test images
-All the ISIC2018 test images are in jpg format. 
+All the ISIC2018 test images are in jpg format. Save those images into a folder.
 
 ### Donwload the pretrained model weights
 
+### Run the pretrained model on test data
+```
+python submission.py --image-path test_image_path --model-weight model.pt
+```
+By default, the predicted masks will be saved in the prediction folder
 
 # Further improvement
 
