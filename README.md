@@ -3,31 +3,31 @@ Melanoma is the most deadly form of skin cancer worldwide. Many efforts have bee
 
 # How to run the pre-trained model on the ISIC2018 test data
 
-### Create a Python environment
+#### 1. Create a Python environment
 ```
 conda create -n isic2018 python=3
 source activate isic2018
 ```
 
-### Install necessary packages
+#### 2. Install necessary packages
 ```
 pip install -r requirements.txt
 ```
 Those are the packages installed in my environment and many packages are not necessarily needed to run the pretrained model. But for ease of use, I just dumped all the installed packages into one file.
 
-### Clone this repo
+#### 3. Clone this repo
 ```
 git clone https://github.com/chvlyl/ISIC2018.git
 cd ISIC2018
 ```
 
-### Download the ISIC2018 test images
+#### 4. Download the ISIC2018 test images
 All the ISIC2018 test images are in jpg format. Save those images into a folder.
 
-### Donwload the pretrained model weights
+#### 5. Donwload the pretrained model weights
 The trained model weights can be downloaded [here](https://drive.google.com/drive/folders/1oxA7AXwnIug2H91r_49qthekz6UP47rc?usp=sharing)
 
-### Run the pretrained model on test data
+#### 6. Run the pretrained model on test data
 ```
 python submission.py --image-path test_image_path --model-weight model.pt
 ```
@@ -36,4 +36,5 @@ By default, the predicted masks will be saved in the prediction folder
 # Further improvement
 
 # Reference	
+1. For more details, please check our paper
 Eric Z. Chen, Xu Dong, Junyan Wu, Hongda Jiang, Xiaoxiao Li, Ruichen Rong. Lesion Attributes Segmentation for Melanoma Detection with Deep Learning. bioRxiv 2018 [https://doi.org/10.1101/381855]
