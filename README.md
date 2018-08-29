@@ -25,6 +25,7 @@ cd ISIC2018
 All the ISIC2018 test images are in jpg format. Save those images into a folder.
 
 ### Donwload the pretrained model weights
+The trained model weights can be downloaded [here](https://drive.google.com/drive/folders/1oxA7AXwnIug2H91r_49qthekz6UP47rc?usp=sharing)
 
 ### Run the pretrained model on test data
 ```
