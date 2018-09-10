@@ -70,7 +70,7 @@ $^{6}$UT Southwestern Medical Center, Dallas, TX, USA
 \maketitle
 %
 \begin{abstract}
-Melanoma is the most deadly form of skin cancer worldwide. Many efforts have been made for early detection of melanoma. The International Skin Imaging Collaboration (ISIC) hosted the 2018 Challenges to improve the diagnosis of melanoma based on dermoscopic images. In this paper, we describe our solution for the task 2 of ISIC 2018 Challenges. We present a multi-task U-Net model  to automatically detect lesion attributes of melanoma. Our multi-task U-Net deep learning model achieves a Jaccard index of 0.433 on official test data, which ranks the 5th place on the final leaderboard. 
+Melanoma is the most deadly form of skin cancer worldwide. Many efforts have been made for early detection of melanoma. The International Skin Imaging Collaboration (ISIC) hosted the 2018 Challenges to improve the diagnosis of melanoma based on dermoscopic images. In this paper, we describe our solution for the task 2 of ISIC 2018 Challenges. We present a multi-task U-Net model to automatically detect lesion attributes of melanoma. Our multi-task U-Net deep learning model achieves a Jaccard index of 0.433 on official test data, which ranks the 5th place on the final leaderboard. 
 \end{abstract}
 %
 \begin{keywords}
@@ -104,7 +104,7 @@ In this paper, we describe our solution for the task 2 of ISIC 2018 Challenges. 
 
 \begin{figure*}[!ht]
 \begin{center}
-\includegraphics[scale=0.5,trim=0 200 0 0]{vgg.pdf}
+\includegraphics[scale=0.5,trim=0 200 0 50]{vgg.pdf}
 \end{center}
    \caption{Network structure using U-Net architecture. The encoder part of the U-Net is replaced with a pretrained VGG16 network \cite{shvets2018automatic}. We also add two classification heads to the network, where one is added to the middle layer with $1\times1$ convolution and global average pooling layers and the other is added to the last layer with a global max pooling layer.}
 \label{fig:short}
@@ -138,7 +138,7 @@ The raw skin images have various sizes, from $540\times722$ to $4499\times6748$.
 We first freeze all the encoder layers and only train the decoder layers for 50 epochs. Then we train the whole network for another 250 epochs. We use a learning rate of 0.01 with Adam optimizer and then decrease it by 0.8 when validation loss does not improve for 5 epochs during training. During training, we augment the skin images and masks by random flipping, rotation, scaling as well as randomly adjusting brightness and saturation. We use cutoff 0.3 to transform the predicted probability into the binary mask. The whole analysis is implemented in Pytorch. 
 
 
-\subsection{Results}
+\section{Results}
 Figure 1 shows an example of several skin images and their corresponding lesion attributes (for each attribute, top rows show the ground truth masks).  We noticed that not all attributes present in each skin image. That is, some of the masks are empty for certain skin images. Table 1 shows the summary of non-empty masks for each lesion attribute. 58.7\%, 26.3\% and 23.2\% of the skin images have non-empty masks for Pigment network, milia-like cysts, and globules, respectively.  While only 7.3\% and 2.9\% of the skin images have non-empty masks for negative network and streaks, respectively. Since segmentation is essentially a pixel-wise classification problem, a large number of empty masks increase the number of samples in negative class.  In the U-Net model, we add two classification heads to classify the empty versus non-empty masks. Figure 1 shows the predicted masks from the multi-task U-Net model (for each attribute, the bottom rows show the predicted masks). The Jaccard index is 0.477 on the official validation dataset. The final Jaccard index on the official test data is 0.433, which ranks the 5th place on the final leaderboard.
 
 %\begin{figure}
@@ -202,7 +202,7 @@ Figure 1 shows an example of several skin images and their corresponding lesion 
 %\end{table}
 
 
-\subsection{Discussion}
+\section{Discussion}
 In this paper, we propose a multi-task U-Net model to detect five attributes of skin lesions. We replace the encoder part of the U-Net with a pretrained VGG16 network and add two classification heads to the U-Net. Our submission ranks the 5th place on the final leaderboard of ISIC 2018 task 2. 
 
 For our U-Net based model, we tried to add the batch normalize layers to the encoder and decoder parts of the network. However, this does not improve the model performance compared to the model without batch normalization layers. We also tried to replace the encoder part of the U-Net network with pretrained DenseNet. However, the GPU memory usage was too hight and we could only fit one image per patch. The training took a long time and the final result was worse than that with VGG16 as the encoder. 
