@@ -128,7 +128,7 @@ We used the ResNet 101 as the backbone of the network. The backbone weights are 
 
 We did the training directly using the original images in the provided dataset without any preprocessing because it gave better result compared with training onto the resized images (1024 by 1024). To promote the training, only those image with non-empty attribute masks are used in the training. Under such training strategy, the best Jaccard index we obtained is 0.233.
 
-\subsection{Results}
+\section{Results}
 Figure 2 shows an example of several skin images and their corresponding lesion attributes (for each attribute, top rows show the ground truth masks).  We noticed that not all attributes present in each skin image. That is, some of the masks are empty for certain skin images. Table 1 shows the summary of non-empty masks for each lesion attribute. 58.7\%, 26.3\% and 23.2\% of the skin images have non-empty masks for Pigment network, milia-like cysts, and globules, respectively.  While only 7.3\% and 2.9\% of the skin images have non-empty masks for negative network and streaks, respectively. Since segmentation is essentially a pixel-wise classification problem, a large number of empty masks increase the number of samples in negative class. Therefore, in the Mask R-CNN based approach, we train the model only using the non-empty masks. In the U-Net based approach, we add two classification heads to classify the empty versus non-empty masks. Figure 2 shows the predicted masks from the U-Net based approach (for each attribute, the bottom rows show the predicted masks). The Jaccard index on the official validation dataset is 0.477 for U-Net based approach and 0.233 for Mask R-CNN based approach (Table 2). 
 
 %\begin{figure}
