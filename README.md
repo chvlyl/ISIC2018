@@ -34,12 +34,12 @@ python submission.py --image-path test_image_path --model-weight model.pt
 By default, the predicted masks will be saved in the prediction folder
 
 ## Some notes
-1. I trained the model with multi-GPUs. If you run my code on single GPU, you may get an error about the parameter name mismatch. I think this is a bug in Pytorch and currently I don't have a good solution rather than manually modify the parameter names (remove the 'module' prefix)
+1. I trained the model with multi-GPUs. If you run my code on a single GPU, you may get an error about the parameter name mismatch. I think this is a bug in Pytorch and currently I don't have a good solution rather than manually modifying the parameter names (remove the 'module' prefix)
 
 2. When I developed the model, I tried many different things. I commented out some code and kept them just in case you may be interested in trying them out. 
 
 ## Further improvement
-1. I entered in this competition relatively late and I probably only had one month to work on it in part-time. Therefore, I believe many things can still be improved. Feel free to copy my code and work on it.
+1. I entered in this competition relatively late and I only had one month to work on it in part-time. Therefore, I believe many things can still be improved. Feel free to copy my code and work on it.
 
 2. I probably still need to clean my code when I have time. 
 
