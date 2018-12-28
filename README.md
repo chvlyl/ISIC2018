@@ -47,3 +47,36 @@ By default, the predicted masks will be saved in the prediction folder
 ## Reference    
 1. For more details, please check our paper: Eric Z. Chen, Xu Dong, Junyan Wu, Hongda Jiang, Xiaoxiao Li, Ruichen Rong. Lesion Attributes Segmentation for Melanoma Detection with Deep Learning. bioRxiv 2018 [https://doi.org/10.1101/381855]
 2. Some of the code was adapted from this [repo](https://github.com/ternaus/robot-surgery-segmentation)
+
+## Other
+We submitted our paper to ISBI and got the comments from one of the reviewers:
+
+> Reviewer 4 of ISBI 2019 submission 696
+
+> Comments to the author
+> 
+> This paper is a very close copy of previously published
+> MICCAI paper\
+> https://s3.amazonaws.com/covalic-prod-assetstore/ec/7f/ec7f
+> b652e9f944af87e3d11d97fef7c0?response-content-disposition=i
+> nline%3B%20filename%3D%22nips_2018.pdf%22&X-Amz-Algorithm=A
+> WS4-HMAC-SHA256&X-Amz-Expires=3600&X-Amz-Credential=AKIAITH
+> BL3CJMECU3C4A%2F20181122%2Fus-east-1%2Fs3%2Faws4_request&X-
+> Amz-SignedHeaders=host&X-Amz-Date=20181122T013624Z&X-Amz-Si
+> gnature=c9534235ac738c4d45ae8017e2a571d84098b1a1c6ea08576c0
+> f82038685b3db
+
+> ==> Same figures
+> ==> Same results
+> ==> Many paragraphs copied verbatim
+> ==> Reject
+
+I was furious when I read this comment: 
+
+1. The link does not work at all. Why not just provide a title of the MICCAI paper? 
+
+2. All the code, results, figures and draft are provided in this Github repo. I personally generated all of them. How is possible I copied "same figures" and "same results" from previous published MICCAI paper? 
+
+3.  I checked the iThenticate (a software for plagiarism) and found that it matches our submitted paper to our biorxiv preprint (https://www.biorxiv.org/content/early/2018/09/10/381855). But this is not "previously published MICCAI paper"
+
+To this reviewer: please provide solid evidence and be responsible as a reviewer! 
