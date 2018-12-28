@@ -77,6 +77,6 @@ I was furious when I read this comment:
 
 2. All the code, results, figures and draft are provided in this Github repo. I personally generated all of them. How is possible I copied "same figures" and "same results" from previous published MICCAI paper? 
 
-3.  I checked the iThenticate (a software for plagiarism) and found that it matches our submitted paper to our biorxiv preprint (https://www.biorxiv.org/content/early/2018/09/10/381855). But this is not "previously published MICCAI paper"
+3.  I checked the iThenticate (a software for plagiarism) and found that it matches our submitted paper to our biorxiv preprint (https://www.biorxiv.org/content/early/2018/09/10/381855). But this is not "previously published MICCAI paper". It is a common practice to submitted one's own preprint to a conference. 
 
 To this reviewer: please provide solid evidence and be responsible as a reviewer! 
