@@ -85,6 +85,6 @@ The data was not split based on task2. I was working with some friends and the o
 
 ## Reference    
 1. For more details, please check our paper: Eric Z. Chen, Xu Dong, Junyan Wu, Hongda Jiang, Xiaoxiao Li, Ruichen Rong. Lesion Attributes Segmentation for Melanoma Detection with Deep Learning. ISBI 2019 [https://ieeexplore.ieee.org/document/8759483] bioRxiv 2018 [https://doi.org/10.1101/381855]
-2. My poster presented at ISBI 2019 [ISBI_EZC.pdf](ISBI_EZC.pdf)
+2. My poster presented at ISBI 2019 ([ISBI_EZC.pdf](ISBI_EZC.pdf))
 3. Some of the code was adopted from this [repo](https://github.com/ternaus/robot-surgery-segmentation)
 
