@@ -13,14 +13,16 @@ Deep learning models have also been applied toclassify skin diseases and segment
 
 We noticed that not all attributes present in each skin image. Below is a summary of non-empty masks in the training data. N is the number of non-empty masks. 58.7%, 26.3% and 23.2% of the skin images have non-empty masks for pigment network, milia-like cysts, and globules, respectively. While only 7.3% 2.9% of the skin images have non-empty masks for negative network and streaks, respectively. Since segmentation is essentially a pixel-wise classification problem, a large numberof empty masks increase the number of samples in negative class.
 
+<p align="center">
 <img src="img/percentage.png" width="300" align="center">
-
+</p>
 
 
 Examples of skin images and corresponding lesion attributes. For each attribute, the top row is the ground truth masks and the bottom row is the predicted masks from multi-task U-Net model. Note that many of the ground truth masks are empty, indicating no corresponding lesion attributes in the skin images.
 
+<p align="center">
 <img src="img/skin.png" width="400" align="center">
-
+</p>
 
 We develop a multi-task U-Net model to automatically detect lesion attributes of melanoma.  In theU-Net model, we replace the encoder part of the U-Net witha pretrained VGG16 network.  We further extend the model based on multi-task learning.  In the middle layer and the last layer of the U-Net, we add two classification heads to classify the empty masks versus the non-empty masks.  One classification head is added to the middle layer with a 1×1 convolutional layer followed by a global average pooling layer and the other is added to the last layer with a global max pooling layer. The experiment results show that the extra ancillary classification task indeed improves the performance of the segmentation task.  Without any model ensemble, our multi-task U-Net model achieves a Jaccard index of 0.433 on official test data, which is the best single-model result. 
 
