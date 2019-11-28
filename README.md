@@ -61,6 +61,7 @@ All the ISIC2018 test images are in jpg format. Save those images into a folder.
 #### 5. Download the pretrained model weights
 The trained model weights can be downloaded [here](https://drive.google.com/drive/folders/1oxA7AXwnIug2H91r_49qthekz6UP47rc?usp=sharing)
 
+
 #### 6. Run the pretrained model on test data
 ```
 python submission.py --image-path test_image_path --model-weight model.pt
@@ -71,6 +72,10 @@ By default, the predicted masks will be saved in the prediction folder
 1. I trained the model with multi-GPUs. If you run my code on a single GPU, you may get an error about the parameter name mismatch. I think this is a bug in Pytorch and currently I don't have a good solution rather than manually modifying the parameter names (remove the 'module' prefix)
 
 2. When I developed the model, I tried many different things. I commented out some code and kept them just in case you may be interested in trying them out. 
+
+3. The pickle file I used for train test split.
+
+The data was not split based on task2. I was working with some friends and the original plan was to use the results from other tasks (1 and 3) to help our own task 2. So the data was split based on task1 (or task3) so that we had the same validation and test dataset. I could use the results from task1 or task3 to help my task. I would suggest you split the data by yourself according to this format in the pickle file. 
 
 ## Further improvement
 1. I entered in this competition relatively late and I only had one month to work on it in part-time. Therefore, I believe many things can still be improved. Feel free to copy my code and work on it.
