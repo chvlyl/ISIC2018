@@ -8,15 +8,15 @@ Melanoma is the most deadly form of skin cancer worldwide. Many efforts have bee
 
 Examples of dermoscopic skin images and corresponding lesion attribute topology (Figures from [https://challenge2018.isic-archive.com/](https://challenge2018.isic-archive.com/))
 
-<img src="img/percentage.png" width="600" align="center">
+<img src="img/percentage.png" width="300" align="center">
 
 Summary of non-empty masks in the training data. 
 
-<img src="img/skin.png" width="600" align="center">
+<img src="img/skin.png" width="400" align="center">
 
 Examples of skin images and corresponding lesion attributes. For each attribute, the top row is the ground truth masks and the bottom row is the predicted masks from multi-task U-Net model. Note that many of the ground truth masks are empty, indicating no corresponding lesion attributes in the skin images.
 
-<img src="img/vgg.png" width="600" align="center">
+<img src="img/vgg.png" width="700" align="center">
 
 Network structure using U-Net architecture. The encoder part of the U-Net is replaced with a pretrained VGG16 network. We also add two classification heads to the network, where one is added to the middle layer with a 1 × 1 convolutional layer followed by a global average pooling layer and the other is added to the last layer with a global max pooling layer.
 
