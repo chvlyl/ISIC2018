@@ -2,25 +2,35 @@
 Melanoma is the most deadly form of skin cancer worldwide. Many efforts have been made for early detection of melanoma. The International Skin Imaging Collaboration (ISIC) hosted the 2018 Challenges to help the diagnosis of melanoma based on dermoscopic images. We describe our solutions for the task 2 of ISIC 2018 Challenges. We present two deep learning approaches to automatically detect lesion attributes of melanoma, one is a multi-task U-Net model and the other is a Mask R-CNN based model. Our multi-task U-Net model achieves a Jaccard index of 0.433 on official test data of ISIC 2018 Challenges task 2, which is the best single-model result and ranks the 5th place on the final leaderboard.
 
 
-## Method
+## Introduction
+
+Deep learning models have also been applied toclassify skin diseases and segment whole lesion regions. However, lesion attribution segmentation for melanomadetection has not been well explored. Automatic detection of those skin lesion attributes can be a tremendous help forearly melanoma diagnosis.  Towards this goal, the Interna-tional Skin Imaging Collaboration (ISIC) hosts a competitionto predict the locations of five skin lesion patterns (i.e., dermoscopic attributes) in dermoscopic images. These five pat-terns are pigment network, negative network, streaks, milia-like cysts, and globules.  These morphological pat-terns have been associated with clinical criteria for detectingskin disease. Below are examples of dermoscopic skin images and corresponding lesion attribute topology (Figures from [https://challenge2018.isic-archive.com/](https://challenge2018.isic-archive.com/))
 
 <p align="center">
 <img src="img/intro.png" width="600" align="center">
 </p>
 
-Examples of dermoscopic skin images and corresponding lesion attribute topology (Figures from [https://challenge2018.isic-archive.com/](https://challenge2018.isic-archive.com/))
+
+We noticed that not all attributes present in each skin image. Below is a summary of non-empty masks in the training data. N is the number of non-empty masks. 58.7%, 26.3% and 23.2% of the skin images have non-empty masks for pigment network, milia-like cysts, and globules, respectively. While only 7.3% 2.9% of the skin images have non-empty masks for negative network and streaks, respectively. Since segmentation is essentially a pixel-wise classification problem, a large numberof empty masks increase the number of samples in negative class.
 
 <img src="img/percentage.png" width="300" align="center">
 
-Summary of non-empty masks in the training data. 
 
-<img src="img/skin.png" width="400" align="center">
 
 Examples of skin images and corresponding lesion attributes. For each attribute, the top row is the ground truth masks and the bottom row is the predicted masks from multi-task U-Net model. Note that many of the ground truth masks are empty, indicating no corresponding lesion attributes in the skin images.
 
-<img src="img/vgg.png" width="700" align="center">
+<img src="img/skin.png" width="400" align="center">
 
-Network structure using U-Net architecture. The encoder part of the U-Net is replaced with a pretrained VGG16 network. We also add two classification heads to the network, where one is added to the middle layer with a 1 × 1 convolutional layer followed by a global average pooling layer and the other is added to the last layer with a global max pooling layer.
+
+We develop a multi-task U-Net model to automatically detect lesion attributes of melanoma.  In theU-Net model, we replace the encoder part of the U-Net witha pretrained VGG16 network.  We further extend the model based on multi-task learning.  In the middle layer and the last layer of the U-Net, we add two classification heads to classify the empty masks versus the non-empty masks.  One classification head is added to the middle layer with a 1×1 convolutional layer followed by a global average pooling layer and the other is added to the last layer with a global max pooling layer. The experiment results show that the extra ancillary classification task indeed improves the performance of the segmentation task.  Without any model ensemble, our multi-task U-Net model achieves a Jaccard index of 0.433 on official test data, which is the best single-model result. 
+
+<p align="center">
+<img src="img/vgg.png" width="700" align="center">
+</p>
+
+The loss is a combination of pixel-wise segmentation loss loss1, classification loss using the middle layer loss2 and classification loss using the last layer loss3.
+
+loss = loss1+ 0.5×loss2 + 0.5×loss3
 
 ## How to run the pre-trained model on the ISIC2018 test data
 
