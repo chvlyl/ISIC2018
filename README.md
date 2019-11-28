@@ -4,7 +4,9 @@ Melanoma is the most deadly form of skin cancer worldwide. Many efforts have bee
 
 ## Method
 
+<p align="center">
 <img src="img/intro.png" width="600" align="center">
+</p>
 
 Examples of dermoscopic skin images and corresponding lesion attribute topology (Figures from [https://challenge2018.isic-archive.com/](https://challenge2018.isic-archive.com/))
 
