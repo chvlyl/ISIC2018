@@ -109,7 +109,7 @@ docker  build -t isic2018 .
 
 ## create a docker container and mount the git folder
 cd ..
-docker run --gpus all --rm -v $(pwd):/home/ISIC2018/ --name isic2018 --ipc=host -it isic2018  bash
+docker run --gpus all --rm -v $(pwd):/home/ISIC2018/ --user $(id -u):$(id -g) --name isic2018 --ipc=host -it isic2018  bash
 ```
 
 ### Step 2: Download data and model weights
@@ -153,7 +153,7 @@ unzip data/train_mask.zip -d data/
 I have already split the data and the information is in `data/train_test_split.csv` and `data/train_test_split.pickle`. The format is as following:
 
 <p align="center">
-<img src="img/train_test_split.png" width="500" align="center">
+<img src="img/train_test_split.png" width="700" align="center">
 </p>
 
 If you don't want to use my split, you need to prepare a file in this format and save it into a pickle file.
@@ -165,6 +165,9 @@ python3 preprocess.py --train-test-split-file ./data/train_test_id.pickle \
         --mask-path ./data/ISIC2018_Task2_Training_GroundTruth_v3/ \
         --save-path ./data/task2_h5/
 ```
+
+### Step 2: Train the model
+
 
 ## Some notes
 1. I trained the model with multi-GPUs. If you run my code on a single GPU, you may get an error about the parameter name mismatch. I think this is a bug in Pytorch and currently I don't have a good solution rather than manually modifying the parameter names (remove the 'module' prefix). 

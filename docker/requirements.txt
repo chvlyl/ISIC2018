@@ -10,3 +10,4 @@ tensorflow-gpu
 gdown
 joblib
 h5py
+torchnet

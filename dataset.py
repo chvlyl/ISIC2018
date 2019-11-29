@@ -1,24 +1,23 @@
+## python
 import h5py
 import random
 import torch
 import numpy as np
 import pickle
+
+## pytorch
 from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
 from torchvision import transforms
 import torchvision.transforms.functional as TF
 from torch import nn
-from keras.preprocessing.image import array_to_img, img_to_array
+from tensorflow.keras.preprocessing.image import ImageDataGenerator, array_to_img, img_to_array, load_img
 
 
 class SkinDataset(Dataset):
-    def __init__(self, train_test_id, image_path, train=True, attribute=None, transform=None, num_classes=None):
-        """
-        1. Store all meaningful arguments to the constructor here for debugging.
-        2. Do most of the heavy-lifting like downloading the dataset, checking for consistency of already existing dataset etc. here
-        3. Aspire to store just the sufficient number of variables for usage in other member methods. Keeps the memory footprint low.
-        4. For any further derived classes, this is the place to apply any pre-computed transforms over the sufficient variables (e.g. building a paired dataset from a dataset of singleton images)
-        """
+    def __init__(self, train_test_id, image_path, train_test_split_file='./data/train_test_id.pickle', 
+                     train=True, attribute=None, transform=None, num_classes=None):
+        
         self.train_test_id = train_test_id
         self.image_path = image_path
         self.train = train
@@ -28,8 +27,7 @@ class SkinDataset(Dataset):
         self.transform = transform
         self.num_classes = num_classes
 
-        with open('/media/eric/SSD2/Project/11_ISCB2018/2_Analysis/20180516_classification_segmentation/train_test_id.pickle',
-                'rb') as f:
+        with open(train_test_split_file, 'rb') as f:
             self.mask_ind = pickle.load(f)
 
         ## subset the data by mask type
@@ -48,13 +46,6 @@ class SkinDataset(Dataset):
         self.n = self.train_test_id.shape[0]
 
     def __len__(self):
-        """
-        This function gets called with len()
-
-        1. The length should be a deterministic function of some instance variables and should be a non-ambiguous representation of the total sample count. This gets tricky especially when certain samples are randomly generated, be careful
-        2. This method should be O(1) and contain no heavy-lifting. Ideally, just return a pre-computed variable during the constructor call.
-        3. Make sure to override this method in further derived classes to avoid unexpected samplings.
-        """
         return self.n
 
 
@@ -66,7 +57,7 @@ class SkinDataset(Dataset):
             ## Input type float32 is not supported
 
             ##!!!
-            ## the preprocess funcions from Keras are very convient
+            ## the preprocess funcions from Keras are very convenient
             ##!!!
 
             # Resize
@@ -191,13 +182,6 @@ class SkinDataset(Dataset):
         return image, mask
 
     def __getitem__(self, index):
-        """
-        1. Make appropriate assertions on the "index" argument. Python allows slices as well, so it is important to be clear of what arguments to support. Just supporting integer indices works well most of the times.
-        2. This is the place to load large data on-demand. DONOT ever load all data in the constructor as that unnecessarily bloats memory.
-        3. This method should be as fast as possible and should only be using certain pre-computed values. e.g. When loading images, the path directory should be handled during the constructor and this method should only load the file into memory and apply relevant transforms.
-        4. Whenever lazy loading is possible, this is the place to be. e.g. Loading images only when called should be here. Keeps the memory footprint low.
-        5. Subsequently, this also becomes the place for any input transforms (like resizing, cropping, conversion to tensor and so on)
-        """
         img_id = self.train_test_id[index]
 
         ### load image

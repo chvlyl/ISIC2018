@@ -1,9 +1,12 @@
+## python
 import argparse
 import json
 import random
 from pathlib import Path
 import numpy as np
+import pandas as pd
 import time
+import pickle
 
 ## pytorch
 import torch
@@ -12,7 +15,7 @@ from torch.optim import Adam, SGD
 from torch.backends import cudnn
 import torch.nn.functional as F
 from torch.optim.lr_scheduler import ReduceLROnPlateau
-from tensorboardX import SummaryWriter
+from torch.utils.tensorboard import SummaryWriter
 import torchvision.transforms as transforms
 
 ## model
@@ -21,22 +24,37 @@ from loss import LossBinary
 from dataset import make_loader
 from utils import save_weights, write_event, write_tensorboard,print_model_summay,set_freeze_layers,set_train_layers,get_freeze_layer_names
 from validation import validation_binary
-from prepare_train_val import get_split
 from transforms import DualCompose,ImageOnly,Normalize,HorizontalFlip,VerticalFlip
 from metrics import AllInOneMeter
+
+
+def get_split(train_test_split_file='./data/train_test_id.pickle'):
+    with open(train_test_split_file,'rb') as f:
+        train_test_id = pickle.load(f)
+
+        train_test_id['total'] = train_test_id[['pigment_network',
+                                      'negative_network',
+                                      'streaks',
+                                      'milia_like_cyst',
+                                      'globules']].sum(axis=1)
+        valid = train_test_id[train_test_id.Split != 'train'].copy()
+        valid['Split'] = 'train'
+        train_test_id = pd.concat([train_test_id, valid], axis=0)
+    return train_test_id
 
 
 def main():
     parser = argparse.ArgumentParser()
     arg = parser.add_argument
     arg('--jaccard-weight', type=float, default=1)
-    arg('--root', type=str, default='runs/debug', help='checkpoint root')
-    arg('--image-path', type=str, default='data', help='image path')
+    arg('--checkpoint', type=str, default='checkpoint/1_multi_task_unet', help='checkpoint path')
+    arg('--train-test-split-file', type=str, default='./data/train_test_id.pickle', help='train test split file path')
+    arg('--image-path', type=str, default='data/task2_h5/', help='image path')
     arg('--batch-size', type=int, default=16)
     arg('--n-epochs', type=int, default=100)
     arg('--optimizer', type=str, default='Adam', help='Adam or SGD')
     arg('--lr', type=float, default=0.001)
-    arg('--workers', type=int, default=10)
+    arg('--workers', type=int, default=6)
     arg('--model', type=str, default='UNet16', choices=['UNet', 'UNet11', 'UNet16', 'UNet16BN', 'LinkNet34'])
     arg('--model-weight', type=str, default=None)
     arg('--resume-path', type=str, default=None)
@@ -47,8 +65,8 @@ def main():
 
 
     ## folder for checkpoint
-    root = Path(args.root)
-    root.mkdir(exist_ok=True, parents=True)
+    checkpoint = Path(args.checkpoint)
+    checkpoint.mkdir(exist_ok=True, parents=True)
 
     image_path = args.image_path
 
@@ -62,7 +80,7 @@ def main():
     print('--' * 10)
     print(args)
     print('--' * 10)
-    root.joinpath('params.json').write_text(
+    checkpoint.joinpath('params.json').write_text(
         json.dumps(vars(args), indent=True, sort_keys=True))
 
     ## load pretrained model
@@ -81,8 +99,9 @@ def main():
 
     ## multiple GPUs
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    if torch.cuda.device_count() > 1:
-        model = nn.DataParallel(model)
+    #if torch.cuda.device_count() > 1:
+    #    model = nn.DataParallel(model)
+    model = nn.DataParallel(model)
     model.to(device)
 
     ## load pretrained model
@@ -126,7 +145,7 @@ def main():
     cudnn.benchmark = True
 
     ## get train_test_id
-    train_test_id = get_split()
+    train_test_id = get_split(args.train_test_split_file)
 
     ## train vs. val
     print('--' * 10)
@@ -189,7 +208,7 @@ def main():
     ##########
     ## load previous model status
     previous_valid_loss = 10
-    model_path = root / 'model.pt'
+    model_path = checkpoint / 'model.pt'
     if args.resume_path is not None and model_path.exists():
         state = torch.load(str(model_path))
         epoch = state['epoch']
@@ -210,7 +229,7 @@ def main():
 
     #########
     ## start training
-    log = root.joinpath('train.log').open('at', encoding='utf8')
+    log = checkpoint.joinpath('train.log').open('at', encoding='utf8')
     writer = SummaryWriter()
     meter = AllInOneMeter()
     #if previous_valid_loss = 10000
@@ -369,6 +388,4 @@ def main():
 
 
 if __name__ == '__main__':
-    # python train.py --image-path /media/eric/SSD2/Project/11_ISCB2018/0_Data/Task2/h5/
-    # tensorboard --logdir runs --port 6008
     main()
