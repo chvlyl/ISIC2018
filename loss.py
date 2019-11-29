@@ -29,7 +29,7 @@ class LossBinary:
         if self.jaccard_weight:
             eps = 1e-15
             jaccard_target = (targets == 1).float()
-            jaccard_output = F.sigmoid(outputs)
+            jaccard_output = torch.sigmoid(outputs)
 
             intersection = (jaccard_output * jaccard_target).sum()
             union = jaccard_output.sum() + jaccard_target.sum()

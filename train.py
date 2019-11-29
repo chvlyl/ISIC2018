@@ -50,11 +50,11 @@ def main():
     arg('--checkpoint', type=str, default='checkpoint/1_multi_task_unet', help='checkpoint path')
     arg('--train-test-split-file', type=str, default='./data/train_test_id.pickle', help='train test split file path')
     arg('--image-path', type=str, default='data/task2_h5/', help='image path')
-    arg('--batch-size', type=int, default=16)
+    arg('--batch-size', type=int, default=8)
     arg('--n-epochs', type=int, default=100)
     arg('--optimizer', type=str, default='Adam', help='Adam or SGD')
     arg('--lr', type=float, default=0.001)
-    arg('--workers', type=int, default=6)
+    arg('--workers', type=int, default=4)
     arg('--model', type=str, default='UNet16', choices=['UNet', 'UNet11', 'UNet16', 'UNet16BN', 'LinkNet34'])
     arg('--model-weight', type=str, default=None)
     arg('--resume-path', type=str, default=None)
@@ -169,10 +169,12 @@ def main():
                                      std=[0.229, 0.224, 0.225])
 
     ## define data loader
-    train_loader = make_loader(train_test_id, image_path, args, train=True, shuffle=True,
-                               transform=train_transform)
+    train_loader = make_loader(train_test_id, image_path, args, train=True, shuffle=True, 
+                                train_test_split_file=args.train_test_split_file,
+                                transform=train_transform)
     valid_loader = make_loader(train_test_id, image_path, args, train=False, shuffle=True,
-                               transform=val_transform)
+                                train_test_split_file=args.train_test_split_file,
+                                transform=val_transform)
 
     if True:
         print('--'*10)
@@ -230,7 +232,7 @@ def main():
     #########
     ## start training
     log = checkpoint.joinpath('train.log').open('at', encoding='utf8')
-    writer = SummaryWriter()
+    writer = SummaryWriter(log_dir=checkpoint)
     meter = AllInOneMeter()
     #if previous_valid_loss = 10000
     print('Start training')
@@ -303,9 +305,9 @@ def main():
                 #     loss = torch.tensor(0).type(train_mask.type())
                 #     for feat_inx in range(train_mask.shape[1]):
                 #         loss += criterion(outputs, train_mask)
-                train_prob = F.sigmoid(outputs)
-                train_mask_ind_prob1 = F.sigmoid(outputs_mask_ind1)
-                train_mask_ind_prob2 = F.sigmoid(outputs_mask_ind2)
+                train_prob = torch.sigmoid(outputs)
+                train_mask_ind_prob1 = torch.sigmoid(outputs_mask_ind1)
+                train_mask_ind_prob2 = torch.sigmoid(outputs_mask_ind2)
                 loss1 = criterion(outputs, train_mask)
                 #loss1 = F.binary_cross_entropy_with_logits(outputs, train_mask)
                 #loss2 = nn.BCEWithLogitsLoss()(outputs_mask_ind1, train_mask_ind)
@@ -322,7 +324,7 @@ def main():
                 loss3 = F.binary_cross_entropy_with_logits(outputs_mask_ind2, train_mask_ind)
                 #loss3 = criterion(outputs_mask_ind2, train_mask_ind)
                 loss = loss1*w1 + loss2*w2 + loss3*w3
-                #print(loss1.item(), loss2.item(), loss.item())
+                print(f'epoch={epoch:3d},iter={i:3d}, loss1={loss1.item():.4g}, loss2={loss2.item():.4g}, loss={loss.item():.4g}')
                 optimizer.zero_grad()
                 loss.backward()
                 optimizer.step()
@@ -351,6 +353,7 @@ def main():
             #train_jaccard = np.mean(jaccard)
             #train_auc = str(round(mtr1.value()[0],2))+' '+str(round(mtr2.value()[0],2))+' '+str(round(mtr3.value()[0],2))+' '+str(round(mtr4.value()[0],2))+' '+str(round(mtr5.value()[0],2))
             valid_metrics = valid_fn(model, criterion, valid_loader, device, num_classes)
+            print(valid_metrics)
             ##############
             ## write events
             write_event(log, step, epoch=epoch, train_metrics=train_metrics, valid_metrics=valid_metrics)

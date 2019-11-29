@@ -190,6 +190,9 @@ class SkinDataset(Dataset):
         ### load masks
         mask_np = load_mask(self.image_path, img_id, self.attribute)
 
+        ###
+        #print(img_id,img_np.shape,mask_np.shape)
+
         if self.train:
             img_np, mask_np = self.transform_fn(img_np, mask_np)
 
@@ -211,7 +214,7 @@ class SkinDataset(Dataset):
 
 def load_image(image_file):
     f = h5py.File(image_file, 'r')
-    img_np = f['img'].value
+    img_np = f['img'][()]
     img_np = (img_np / 255.0).astype('float32')
     return img_np
 
@@ -220,23 +223,24 @@ def load_mask(image_path, img_id, attribute='pigment_network'):
     if attribute == 'all':
         mask_file = image_path + '%s_attribute_all.h5' % (img_id)
         f = h5py.File(mask_file, 'r')
-        mask_np = f['img'].value
+        mask_np = f['img'][()]
     else:
         mask_file = image_path + '%s_attribute_%s.h5' % (img_id, mask_attr)
         f = h5py.File(mask_file, 'r')
-        mask_np = f['img'].value
+        mask_np = f['img'][()]
 
     mask_np = mask_np.astype('uint8')
     return mask_np
 
 
-def make_loader(train_test_id, image_path, args, train=True, shuffle=True, transform=None):
+def make_loader(train_test_id, image_path, args, train=True, shuffle=True, transform=None,train_test_split_file='./data/train_test_id.pickle', ):
     data_set = SkinDataset(train_test_id=train_test_id,
                            image_path=image_path,
                            train=train,
                            attribute=args.attribute,
                            transform=transform,
-                           num_classes=args.num_classes)
+                           num_classes=args.num_classes,
+                           train_test_split_file=train_test_split_file)
     data_loader = DataLoader(data_set,
                              batch_size=args.batch_size,
                              shuffle=shuffle,

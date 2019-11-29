@@ -109,7 +109,10 @@ docker  build -t isic2018 .
 
 ## create a docker container and mount the git folder
 cd ..
-docker run --gpus all --rm -v $(pwd):/home/ISIC2018/ --user $(id -u):$(id -g) --name isic2018 --ipc=host -it isic2018  bash
+docker run --gpus all --rm -v $(pwd):/ISIC2018/ \
+           --user $(id -u):$(id -g) --name isic2018 \
+           -e "HOME=/ISIC2018" \
+           --ipc=host -it isic2018  bash
 ```
 
 ### Step 2: Download data and model weights
@@ -167,7 +170,13 @@ python3 preprocess.py --train-test-split-file ./data/train_test_id.pickle \
 ```
 
 ### Step 2: Train the model
-
+```
+python3 train.py --checkpoint checkpoint/1_multi_task_unet\
+        --train-test-split-file ./data/train_test_id.pickle \
+        --image-path ./data/task2_h5/ \
+        --batch-size 4
+        
+```
 
 ## Some notes
 1. I trained the model with multi-GPUs. If you run my code on a single GPU, you may get an error about the parameter name mismatch. I think this is a bug in Pytorch and currently I don't have a good solution rather than manually modifying the parameter names (remove the 'module' prefix). 
