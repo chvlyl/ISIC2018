@@ -175,7 +175,6 @@ python3 train.py --checkpoint checkpoint/1_multi_task_unet\
         --train-test-split-file ./data/train_test_id.pickle \
         --image-path ./data/task2_h5/ \
         --batch-size 4
-        
 ```
 The model will start to train and the results (tensorboard, model weights, etc.) will be saved into the checkpoint folder.
 
