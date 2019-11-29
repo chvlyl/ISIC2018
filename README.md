@@ -116,13 +116,14 @@ docker run --gpus all --rm -v $(pwd):/home/ISIC2018/ --name isic2018 --ipc=host 
 
 #### 4. Download the ISIC2018 test images
 All the ISIC2018 test images are in jpg format. Save those images into a folder.
-
-
+```
+gdown https://challenge.kitware.com/api/v1/item/5b32667856357d41064dab54/download -O data/test.zip
+unzip data/test.zip -d data/
+```
 
 #### 5. Download the pretrained model weights
-The trained model weights can be downloaded [here](https://drive.google.com/drive/folders/1oxA7AXwnIug2H91r_49qthekz6UP47rc?usp=sharing)
+The trained model weights can be downloaded [here](https://drive.google.com/drive/folders/1oxA7AXwnIug2H91r_49qthekz6UP47rc?usp=sharing). Or you can gdown to donwload it.
 ```
-mkdir model
 gdown https://drive.google.com/uc?id=1NsJot5e7umEp5fp_NRqUCB30Sk2MJLOX -O model/model.pt
 ```
 
@@ -130,7 +131,7 @@ gdown https://drive.google.com/uc?id=1NsJot5e7umEp5fp_NRqUCB30Sk2MJLOX -O model/
 
 #### 6. Run the pretrained model on test data
 ```
-python3 submission.py --image-path test_image_path --model-weight model.pt
+python3 submission.py --image-path data/ISIC2018_Task1-2_Test_Input --model-weight model/model.pt --output-path prediction
 ```
 By default, the predicted masks will be saved in the prediction folder
 

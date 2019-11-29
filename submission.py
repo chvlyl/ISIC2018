@@ -6,7 +6,6 @@ import numpy as np
 import pickle
 import glob
 import cv2
-#from keras.preprocessing.image import img_to_array, load_img
 from PIL import Image as pil_image
 
 import torch
@@ -27,19 +26,12 @@ class TestDataset(Dataset):
         self.n = len(image_ids)
 
     def __len__(self):
-        """
-        This function gets called with len()
-
-        1. The length should be a deterministic function of some instance variables and should be a non-ambiguous representation of the total sample count. This gets tricky especially when certain samples are randomly generated, be careful
-        2. This method should be O(1) and contain no heavy-lifting. Ideally, just return a pre-computed variable during the constructor call.
-        3. Make sure to override this method in further derived classes to avoid unexpected samplings.
-        """
         return self.n
 
     def __getitem__(self, index):
         img_id = self.image_ids[index]
         ### load image
-        image_file = self.image_path + '%s.jpg' % img_id
+        image_file = self.image_path + '/%s.jpg' % img_id
         img_np, W, H = load_image_from_file(image_file)
 
         #Image.resize(size, resample=0), PIL.Image.NEAREST
@@ -102,8 +94,9 @@ def test_new_data(model_weight, image_path, temp_path, output_path, model):
         model = UNet16BN(num_classes=5, pretrained='vgg')
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    if torch.cuda.device_count() > 1:
-        model = nn.DataParallel(model)
+    ## my model was trained on multi-GPUs
+    ## need to wrap it with nn.DataParallel
+    model = nn.DataParallel(model)
     model.to(device)
     print('load model weight')
     state = torch.load(model_weight)
@@ -122,7 +115,7 @@ def test_new_data(model_weight, image_path, temp_path, output_path, model):
             test_image = test_image.to(device)  # [N, 1, H, W]
             test_image = test_image.permute(0, 3, 1, 2)
             outputs, outputs_mask_ind1, outputs_mask_ind2 = model(test_image)
-            test_prob = F.sigmoid(outputs)
+            test_prob = torch.sigmoid(outputs)
             test_prob = test_prob.squeeze().data.cpu().numpy()
             for ind, attr in enumerate(attr_types):
                 resize_mask = cv2.resize(test_prob[ind, :, :], (W, H), interpolation=cv2.INTER_CUBIC)
@@ -152,19 +145,13 @@ def main():
     args = parser.parse_args()
     
     model = args.model
-    #model_weight = 'runs_three_losses_part2/debug/model.pt'
-    #model_weight = 'runs_three_losses_part2_including_validation/debug/model.pt'
-    #model_weight = 'runs_vgg16bn/debug/model.pt'
     model_weight = args.model_weight
     if model_weight is None:
         raise ValueError('Please specify model-weight')
 
-    #image_path = '/media/eric/HDD1/1_Project_Raw_Data/23_ISIC_2018/0_Data/Task2/ISIC2018_Task1-2_Validation_Input/'
-    #image_path = '/media/eric/HDD1/1_Project_Raw_Data/23_ISIC_2018/0_Data/Task2/ISIC2018_Task1-2_Test_Input/'
-    #image_path = '/media/eric/SSD2/Project/11_ISCB2018/0_Data/Task2/valid_h5/'
-    #print(image_path)
+
     image_path = args.image_path
-    nfiles = len(os.path.join(image_path, '*.jpg'))
+    nfiles = len(glob.glob(os.path.join(image_path, '*.jpg')))
     if nfiles == 0 :
         raise ValueError('No images found')
     else:
@@ -181,9 +168,4 @@ def main():
 
 
 if __name__ == '__main__':
-    ### ISIC2018 test data
-    # python submission.py --image-path /media/eric/HDD1/1_Project_Raw_Data/23_ISIC_2018/0_Data/Task2/ISIC2018_Task1-2_Test_Input/ --model-weight ../20180705_TernausNet_Reformat/runs_three_losses_part2/debug/model.pt
-    ### ISIC2018 validation data
-    # python submission.py --image-path /media/eric/HDD1/1_Project_Raw_Data/23_ISIC_2018/0_Data/Task2/ISIC2018_Task1-2_Validation_Input/ --model-weight ../20180705_TernausNet_Reformat/runs_three_losses_part2/debug/model.pt
-    
     main()
