@@ -135,6 +135,18 @@ python3 submission.py --image-path data/ISIC2018_Task1-2_Test_Input --model-weig
 ```
 By default, the predicted masks will be saved in the prediction folder
 
+
+## How to train the model on the ISIC2018 data
+
+### Step 1: Download and pre-process the training data
+```
+gdown https://challenge.kitware.com/api/v1/item/5ac37c6356357d4ff856e179/download -O data/train.zip
+unzip data/train.zip -d data/
+gdown https://challenge.kitware.com/api/v1/item/5ae1d97856357d4ff8570ca0/download -O data/train_mask.zip
+unzip data/train_mask.zip -d data/
+```
+
+
 ## Some notes
 1. I trained the model with multi-GPUs. If you run my code on a single GPU, you may get an error about the parameter name mismatch. I think this is a bug in Pytorch and currently I don't have a good solution rather than manually modifying the parameter names (remove the 'module' prefix)
 
