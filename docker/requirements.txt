@@ -1,7 +1,9 @@
 argparse
 h5py
+pandas
 numpy 
 torch
 torchvision
 pathlib
-json
+opencv-python
+tensorflow-gpu

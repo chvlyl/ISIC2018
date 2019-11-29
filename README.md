@@ -37,6 +37,10 @@ loss = loss1+ 0.5×loss2 + 0.5×loss3
 
 ## How to run the pre-trained model on the ISIC2018 test data
 
+### Step 1: Set up environment
+
+#### If you want to use conda 
+
 #### 1. Create a Python environment
 ```
 conda create -n isic2018 python=3
@@ -45,7 +49,7 @@ source activate isic2018
 
 #### 2. Install necessary packages
 ```
-pip install -r requirements.txt
+pip install -r docker/requirements.txt
 ```
 Those are the packages installed in my environment and many packages are not necessarily needed to run the pretrained model. But for ease of use, I just dumped all the installed packages into one file.
 
@@ -55,6 +59,61 @@ git clone https://github.com/chvlyl/ISIC2018.git
 cd ISIC2018
 ```
 
+#### If you want to use docker
+
+#### 1. Install docker
+```
+## make sure you have the latest nvidia driver
+
+## for Ubuntu
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu  $(lsb_release -cs)  stable" 
+sudo apt-get update
+sudo apt-get install docker-ce
+
+## start docker
+sudo systemctl start docker
+sudo systemctl enable docker
+
+## check if docker is running
+sudo systemctl status docker
+
+## check docker version
+docker --version
+
+## add user to docker group 
+## otherwise you may get the following error
+## Got permission denied while trying to connect to the Docker daemon socket
+sudo usermod -aG docker $USER
+## may need to restart the system
+
+# Add the package repositories
+distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
+curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -
+curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
+
+sudo apt-get update && sudo apt-get install -y nvidia-container-toolkit nvidia-container-runtime
+sudo systemctl restart docker
+```
+
+#### 2. Build docker image
+
+```
+## Clone this repo
+git clone https://github.com/chvlyl/ISIC2018.git
+cd ISIC2018
+
+## build docker image
+cd docker
+docker  build -t isic2018 .
+
+## create a docker container and mount the git folder
+cd ..
+docker run --gpus all --rm -v $(pwd):/home/ISIC2018/ --name isic2018 --ipc=host -it isic2018  bash
+```
+
+### Step 2: Download data and model weights
+
 #### 4. Download the ISIC2018 test images
 All the ISIC2018 test images are in jpg format. Save those images into a folder.
 
@@ -62,9 +121,11 @@ All the ISIC2018 test images are in jpg format. Save those images into a folder.
 The trained model weights can be downloaded [here](https://drive.google.com/drive/folders/1oxA7AXwnIug2H91r_49qthekz6UP47rc?usp=sharing)
 
 
+### Step 3: Run the model
+
 #### 6. Run the pretrained model on test data
 ```
-python submission.py --image-path test_image_path --model-weight model.pt
+python3 submission.py --image-path test_image_path --model-weight model.pt
 ```
 By default, the predicted masks will be saved in the prediction folder
 
