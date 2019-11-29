@@ -115,14 +115,14 @@ docker run --gpus all --rm -v $(pwd):/home/ISIC2018/ --name isic2018 --ipc=host 
 ### Step 2: Download data and model weights
 
 #### 4. Download the ISIC2018 test images
-All the ISIC2018 test images are in jpg format. Save those images into a folder.
+All the ISIC2018 test images are in jpg format. Save those images into a folder. You may need to replace the download link below with the new link.
 ```
 gdown https://challenge.kitware.com/api/v1/item/5b32667856357d41064dab54/download -O data/test.zip
 unzip data/test.zip -d data/
 ```
 
 #### 5. Download the pretrained model weights
-The trained model weights can be downloaded [here](https://drive.google.com/drive/folders/1oxA7AXwnIug2H91r_49qthekz6UP47rc?usp=sharing). Or you can gdown to donwload it.
+The trained model weights can be downloaded [here](https://drive.google.com/drive/folders/1oxA7AXwnIug2H91r_49qthekz6UP47rc?usp=sharing). Or you can use gdown to donwload it.
 ```
 gdown https://drive.google.com/uc?id=1NsJot5e7umEp5fp_NRqUCB30Sk2MJLOX -O model/model.pt
 ```
@@ -139,6 +139,9 @@ By default, the predicted masks will be saved in the prediction folder
 ## How to train the model on the ISIC2018 data
 
 ### Step 1: Download and pre-process the training data
+
+#### 1. Download ISIC2018 training data
+You may need to replace the download link below with the new link.
 ```
 gdown https://challenge.kitware.com/api/v1/item/5ac37c6356357d4ff856e179/download -O data/train.zip
 unzip data/train.zip -d data/
@@ -146,15 +149,24 @@ gdown https://challenge.kitware.com/api/v1/item/5ae1d97856357d4ff8570ca0/downloa
 unzip data/train_mask.zip -d data/
 ```
 
+#### 2. Split the official training data into training and validation
+I have already split the data and the information is in `data/train_test_split.csv` and `data/train_test_split.pickle`. The format is as following:
+
+<p align="center">
+<img src="img/train_test_split.png" width="300" align="center">
+</p>
+
+If you don't want to use my split, you need to prepare a file in this format and save it into a pickle file.
+
 
 ## Some notes
-1. I trained the model with multi-GPUs. If you run my code on a single GPU, you may get an error about the parameter name mismatch. I think this is a bug in Pytorch and currently I don't have a good solution rather than manually modifying the parameter names (remove the 'module' prefix)
+1. I trained the model with multi-GPUs. If you run my code on a single GPU, you may get an error about the parameter name mismatch. I think this is a bug in Pytorch and currently I don't have a good solution rather than manually modifying the parameter names (remove the 'module' prefix). 
+
+Update: wrap the model as `nn.DataParallel(model)` and then load the multi-GPU model weights.
 
 2. When I developed the model, I tried many different things. I commented out some code and kept them just in case you may be interested in trying them out. 
 
-3. The pickle file I used for train test split.
-
-The data was not split based on task2. I was working with some friends and the original plan was to use the results from other tasks (1 and 3) to help our own task 2. So the data was split based on task1 (or task3) so that we had the same validation and test dataset. I could use the results from task1 or task3 to help my task. I would suggest you split the data by yourself according to this format in the pickle file. 
+3. The data was not split based on task2. I was working with some friends and the original plan was to use the results from other tasks (1 and 3) to help my own task 2. So the data was split based on task1 (or task3) so that we had the same validation and test dataset. I could use the results from task1 or task3 to help my task. I would suggest you split the data by yourself according to this format in the pickle file. 
 
 ## Further improvement
 1. I entered in this competition relatively late and I only had one month to work on it in part-time. Therefore, I believe many things can still be improved. Feel free to copy my code and work on it.
