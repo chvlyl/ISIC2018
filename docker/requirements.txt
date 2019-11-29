@@ -7,3 +7,4 @@ torchvision
 pathlib
 opencv-python
 tensorflow-gpu
+gdown
