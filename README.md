@@ -118,9 +118,9 @@ docker run --gpus all --rm -v $(pwd):/ISIC2018/ \
 ### Step 2: Download data and model weights
 
 #### 4. Download the ISIC2018 test images
-All the ISIC2018 test images are in jpg format. Save those images into a folder. You may need to replace the download link below with the new link.
+All the ISIC2018 test images are in jpg format. Save those images into a folder. You may need to replace the download link below with the new link. 
 ```
-gdown https://challenge.kitware.com/api/v1/item/5b32667856357d41064dab54/download -O data/test.zip
+gdown challenge_test_data_download_link -O data/test.zip
 unzip data/test.zip -d data/
 ```
 
@@ -146,9 +146,9 @@ By default, the predicted masks will be saved in the prediction folder
 #### 1. Download ISIC2018 training data
 You may need to replace the download link below with the new link.
 ```
-gdown https://challenge.kitware.com/api/v1/item/5ac37c6356357d4ff856e179/download -O data/train.zip
+gdown challenge_train_image_data_download_link -O data/train.zip
 unzip data/train.zip -d data/
-gdown https://challenge.kitware.com/api/v1/item/5ae1d97856357d4ff8570ca0/download -O data/train_mask.zip
+gdown challenge_train_mask_data_download_link -O data/train_mask.zip
 unzip data/train_mask.zip -d data/
 ```
 
@@ -177,6 +177,8 @@ python3 train.py --checkpoint checkpoint/1_multi_task_unet\
         --batch-size 4
         
 ```
+The model will start to train and the results (tensorboard, model weights, etc.) will be saved into the checkpoint folder.
+
 
 ## Some notes
 1. I trained the model with multi-GPUs. If you run my code on a single GPU, you may get an error about the parameter name mismatch. I think this is a bug in Pytorch and currently I don't have a good solution rather than manually modifying the parameter names (remove the 'module' prefix). 
@@ -187,10 +189,9 @@ Update: wrap the model as `nn.DataParallel(model)` and then load the multi-GPU m
 
 3. The data was not split based on task2. I was working with some friends and the original plan was to use the results from other tasks (1 and 3) to help my own task 2. So the data was split based on task1 (or task3) so that we had the same validation and test dataset. I could use the results from task1 or task3 to help my task. I would suggest you split the data by yourself according to this format in the pickle file. 
 
+
 ## Further improvement
 1. I entered in this competition relatively late and I only had one month to work on it in part-time. Therefore, I believe many things can still be improved. Feel free to copy my code and work on it.
-
-2. I probably still need to clean my code when I have time. 
 
 
 ## Reference    
