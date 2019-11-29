@@ -1,8 +1,8 @@
 import numpy as np
 import pandas as pd
 import pickle
-from keras.preprocessing.image import ImageDataGenerator, array_to_img, img_to_array, load_img
-#from sklearn.model_selection import train_test_split
+import argparse
+from tensorflow.keras.preprocessing.image import ImageDataGenerator, array_to_img, img_to_array, load_img
 import h5py
 from joblib import Parallel, delayed
 
@@ -53,18 +53,33 @@ def load_image(ind,row):
     #masks = masks.astype('uint8')
     return None
 
+def main():
+    parser = argparse.ArgumentParser()
+    arg = parser.add_argument
+    arg('--train-test-split-file', type=str, default='./data/train_test_id.pickle', help='train test split file')
+    arg('--mask-path', type=str, default='./data/ISIC2018_Task1-2_Training_Input/', help='training image path')
+    arg('--image-path', type=str, default='./data/ISIC2018_Task2_Training_GroundTruth_v3/', help='ground truth mask path')
+    arg('--output-path', type=str, default='./data/h5', help='prediction')
+    
+    args = parser.parse_args()
 
-with open('/media/eric/SSD2/Project/11_ISCB2018/2_Analysis/20180516_classification_segmentation/train_test_id.pickle', 'rb') as f:
-    train_test_id = pickle.load(f)
+    print('load %s'%args.train_test_split_file)
+    with open(args.train_test_split_file, 'rb') as f:
+        train_test_id = pickle.load(f)
 
-train_test_id['all'] = train_test_id[['pigment_network','negative_network','streaks','milia_like_cyst','globules']].sum(axis=1)
-train_test_id['all'].value_counts()
-# 4       7
-# 3     181
-# 0     514
-# 2     635
-# 1    1257
+    train_test_id['all'] = train_test_id[['pigment_network','negative_network','streaks','milia_like_cyst','globules']].sum(axis=1)
+    print(train_test_id['all'].value_counts())
+    # 4       7
+    # 3     181
+    # 0     514
+    # 2     635
+    # 1    1257
 
-results = Parallel(n_jobs=12)(delayed(load_image)(ind,row) for ind,row in train_test_id.iterrows())
+    ## save train_test_split.csv
+    train_test_id.to_csv('./data/train_test_id.csv',index=False)
+
+    #results = Parallel(n_jobs=12)(delayed(load_image)(ind,row) for ind,row in train_test_id.iterrows())
 
 
+if __name__ == '__main__':
+    main()

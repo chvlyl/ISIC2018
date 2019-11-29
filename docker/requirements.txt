@@ -8,3 +8,5 @@ pathlib
 opencv-python
 tensorflow-gpu
 gdown
+joblib
+h5py
