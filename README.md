@@ -153,11 +153,18 @@ unzip data/train_mask.zip -d data/
 I have already split the data and the information is in `data/train_test_split.csv` and `data/train_test_split.pickle`. The format is as following:
 
 <p align="center">
-<img src="img/train_test_split.png" width="300" align="center">
+<img src="img/train_test_split.png" width="500" align="center">
 </p>
 
 If you don't want to use my split, you need to prepare a file in this format and save it into a pickle file.
 
+#### 3. Merge masks from five attributes into one matrix and normalize the images. Each of processed image will be saved into a hd5 file.
+```
+python3 preprocess.py --train-test-split-file ./data/train_test_id.pickle \
+        --image-path ./data/ISIC2018_Task1-2_Training_Input/ \
+        --mask-path ./data/ISIC2018_Task2_Training_GroundTruth_v3/ \
+        --save-path ./data/task2_h5/
+```
 
 ## Some notes
 1. I trained the model with multi-GPUs. If you run my code on a single GPU, you may get an error about the parameter name mismatch. I think this is a bug in Pytorch and currently I don't have a good solution rather than manually modifying the parameter names (remove the 'module' prefix). 
