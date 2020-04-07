@@ -194,7 +194,7 @@ Update: wrap the model as `nn.DataParallel(model)` and then load the multi-GPU m
 
 
 ## Reference    
-1. For more details, please check our paper: 
+1. For more details, please check our paper:   
 Lesion Attributes Segmentation for Melanoma Detection with Multi-Task U-Net. ([ISBI 2019](https://ieeexplore.ieee.org/document/8759483) ) ([bioRxiv 2018](https://doi.org/10.1101/381855))
 2. My poster presented at ISBI 2019 ([ISBI_EZC.pdf](ISBI_EZC.pdf))
 3. Some of the code was adopted from this [repo](https://github.com/ternaus/robot-surgery-segmentation)
